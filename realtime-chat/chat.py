@@ -8,10 +8,46 @@ root.geometry("300x500")
 root.config(bg="white")
 
 def func():
-  pass 
-
+  t=threading.Thread(target=recv)
+  t.start()
+  
+def recv():
+  listensocket = socket.socket()
+  port = 3050
+  maxconnection=99
+  ip = socket.gethostbyname()
+  print(ip)
+  
+  listensocket.bind('', port)
+  listensocket.listen(maxconnection)
+  (clientsocket,address) =listensocket.accept()
+  
+  while True:
+    sendermessage=clientsocket.recv(1024).decode()
+    if not sendermessage=="":
+      time.sleep(5)
+      lstbx.insert(0, "Client: " +sendermessage)
+      
+s=0 
+def sendmsg():
+  global s
+  if s==0:
+    s = socket.socket()
+    hostname ="HP-ProBook"
+    port=4050
+    s.connect(hostname,port)
+    msg = messagebox.get()
+    lstbx.insert(0, "You: " +msg)
+    s.send(msg.encode())
+    s=s+1
+  else:
+    msg=messagebox.get()
+    lstbx.insert(0, "You : "+msg)
+    s.send(msg.encode())
+    
 def threadsendmsg():
-  pass
+  th=threading.Thread(target=sendmsg)
+  th.start()
 
 startchatimage = PhotoImage(file="start.png")
 buttons = Button(root, image=startchatimage, command=func, borderwidth=0)
